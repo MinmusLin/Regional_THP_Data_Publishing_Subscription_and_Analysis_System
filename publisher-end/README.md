@@ -36,7 +36,7 @@ pip3 install Flask flask_cors requests gunicorn
 
 ```bash
 tmux new-session -s publisher-end
-gunicorn -w 4 -b 0.0.0.0:3000 app:app
+gunicorn -w 1 -b 0.0.0.0:3000 app:app
 ```
 
 重连 tmux 会话：

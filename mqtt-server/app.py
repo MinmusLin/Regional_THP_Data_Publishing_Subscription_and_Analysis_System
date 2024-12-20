@@ -5,6 +5,10 @@ import json
 import time
 import queue
 import paho.mqtt.client as mqtt
+from datetime import datetime
+import matplotlib.pyplot as plt
+import io
+import base64
 
 app = Flask(__name__)
 
@@ -47,14 +51,45 @@ def subscribe_topic(topic):
     mqtt_client.subscribe(mqtt_topic)
     if mqtt_topic not in topic_queues:
         topic_queues[mqtt_topic] = queue.Queue()
+
     def event_stream(q):
         while True:
             try:
                 message = q.get()
-                yield f'{message}\n'
+                data = json.loads(message)
+                sorted_items = sorted(data.items(), key=lambda x: datetime.strptime(x[0], '%Y-%m-%dT%H:%M:%S'))
+                times = [datetime.strptime(k, '%Y-%m-%dT%H:%M:%S').strftime('%H:%M') for k, v in sorted_items]
+                temperatures = [float(v) for k, v in sorted_items]
+                average = round(sum(temperatures) / len(temperatures), 2)
+                average_str = f'{average:.2f}'
+                plt.figure(figsize=(10, 5))
+                plt.plot(times, temperatures, marker='o')
+                plt.xlabel('Time')
+                plt.ylabel('Y')
+                plt.xticks(rotation=45)
+                plt.tight_layout()
+                buf = io.BytesIO()
+                plt.savefig(buf, format='png')
+                plt.close()
+                buf.seek(0)
+                image_base64 = base64.b64encode(buf.read()).decode('utf-8')
+                response_data = {
+                    'date': sorted_items[0][0][:10],
+                    'average': average_str,
+                    'detail': image_base64
+                }
+                yield f'data: {json.dumps(response_data)}\n\n'
             except GeneratorExit:
                 mqtt_client.unsubscribe(mqtt_topic)
                 break
+            except Exception as e:
+                error_data = {
+                    'date': 'null',
+                    'average': 'null',
+                    'detail': e
+                }
+                yield f'data: {json.dumps(error_data)}\n\n'
+
     return Response(stream_with_context(event_stream(topic_queues[mqtt_topic])), mimetype='text/event-stream')
 
 if __name__ == '__main__':

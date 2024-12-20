@@ -39,7 +39,7 @@ pip3 --version
 安装 Python 依赖：
 
 ```bash
-pip3 install Flask flask_cors paho-mqtt gunicorn
+pip3 install Flask flask_cors paho-mqtt gunicorn matplotlib
 ```
 
 ## 启动 MQTT 服务端
@@ -48,7 +48,7 @@ pip3 install Flask flask_cors paho-mqtt gunicorn
 
 ```bash
 tmux new-session -s mqtt-server
-gunicorn -w 4 -b 0.0.0.0:3000 app:app
+gunicorn -w 1 -b 0.0.0.0:3000 app:app
 ```
 
 重连 tmux 会话：
