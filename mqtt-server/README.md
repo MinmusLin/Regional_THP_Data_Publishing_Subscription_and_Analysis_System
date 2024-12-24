@@ -2,9 +2,9 @@
 
 ## 服务器端口配置
 
-服务器开放端口 22、3000：
+服务器开放端口 22、8083：
 
-![](assets/2024-12-20_09-51-33.png)
+![](assets/2024-12-24_08-43-37.png)
 
 ## 环境配置
 
@@ -18,41 +18,42 @@ sudo systemctl enable mosquitto
 sudo systemctl status mosquitto
 ```
 
-![](assets/2024-12-19_16-12-49.png)
+![](assets/2024-12-24_08-47-13.png)
 
-查看 Python 版本：
+修改 `/etc/mosquitto/mosquitto.conf` 文件：
 
 ```bash
-python3 --version
+sudo nano /etc/mosquitto/mosquitto.conf
 ```
 
-![](assets/2024-12-19_16-20-46.png)
+```
+pid_file /run/mosquitto/mosquitto.pid
 
-查看 Pip 版本：
+persistence true
+persistence_location /var/lib/mosquitto/
 
-```bash
-pip3 --version
+log_dest file /var/log/mosquitto/mosquitto.log
+
+include_dir /etc/mosquitto/conf.d
+
+listener 1883
+protocol mqtt
+
+listener 8083
+protocol websockets
+
+allow_anonymous false
+password_file /etc/mosquitto/passwd
 ```
 
-![](assets/2024-12-19_16-21-43.png)
-
-安装 Python 依赖：
+创建用户名和密码文件：
 
 ```bash
-pip3 install Flask flask_cors paho-mqtt gunicorn matplotlib
+sudo mosquitto_passwd -c /etc/mosquitto/passwd mqtt_server
 ```
 
-## 启动 MQTT 服务端
-
-启动 tmux 会话：
+重启 Mosquitto 服务：
 
 ```bash
-tmux new-session -s mqtt-server
-gunicorn -w 1 -b 0.0.0.0:3000 app:app
-```
-
-重连 tmux 会话：
-
-```bash
-tmux attach-session -t mqtt-server
+sudo systemctl restart mosquitto
 ```
