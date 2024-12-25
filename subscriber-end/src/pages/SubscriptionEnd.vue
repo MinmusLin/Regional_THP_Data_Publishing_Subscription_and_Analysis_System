@@ -11,24 +11,51 @@
   <el-button @click="toggleSubscription('pressure')">
     {{ isSubscribedToPressure ? '取消订阅气压数据' : '订阅气压数据' }}
   </el-button>
-  <div>
-    <h2>温度数据</h2>
-    <div v-for='(message, index) in temperatureData' :key='index'>
-      {{ message }}
-    </div>
-  </div>
-  <div>
-    <h2>湿度数据</h2>
-    <div v-for='(message, index) in humidityData' :key='index'>
-      {{ message }}
-    </div>
-  </div>
-  <div>
-    <h2>气压数据</h2>
-    <div v-for='(message, index) in pressureData' :key='index'>
-      {{ message }}
-    </div>
-  </div>
+  <el-tabs v-model='activeName'>
+    <img :src='`data:image/png;base64,${temperatureImageSrc}`'>
+    <el-tab-pane label='温度数据' name='temperature'>
+      <el-table :data='temperatureData' style='width: 100%'>
+        <el-table-column prop='date' label='日期' width='180'/>
+        <el-table-column prop='average' label='平均温度' width='180'/>
+        <el-table-column label='查看图片'>
+          <template #default='scope'>
+            <el-button link type='primary' @click='showImage(scope.row.graph)'>
+              数据折线图
+            </el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+    </el-tab-pane>
+    <el-tab-pane label='湿度数据' name='humidity'>
+      <el-table :data='humidityData' style='width: 100%'>
+        <el-table-column prop='date' label='日期' width='180'/>
+        <el-table-column prop='average' label='平均湿度' width='180'/>
+        <el-table-column label='查看图片'>
+          <template #default='scope'>
+            <el-button link type='primary' @click='showImage(scope.row.graph)'>
+              数据折线图
+            </el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+    </el-tab-pane>
+    <el-tab-pane label='气压数据' name='pressure'>
+      <el-table :data='pressureData' style='width: 100%'>
+        <el-table-column prop='date' label='日期' width='180'/>
+        <el-table-column prop='average' label='平均气压' width='180'/>
+        <el-table-column label='查看图片'>
+          <template #default='scope'>
+            <el-button link type='primary' @click='showImage(scope.row.graph)'>
+              数据折线图
+            </el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+    </el-tab-pane>
+  </el-tabs>
+  <el-dialog v-model='imageDialogVisible' title='数据折线图' width='1200'>
+    <img :src='imageSrc' alt='graph' style='width: 100%'/>
+  </el-dialog>
 </template>
 
 <script setup lang='ts'>
@@ -39,12 +66,18 @@ import {ElMessage} from 'element-plus'
 
 const router = useRouter()
 const client = ref<mqtt.MqttClient | null>(null)
-const temperatureData = ref<string[]>([])
-const humidityData = ref<string[]>([])
-const pressureData = ref<string[]>([])
+const temperatureData = ref<any[]>([])
+const humidityData = ref<any[]>([])
+const pressureData = ref<any[]>([])
 const isSubscribedToTemperature = ref(false)
 const isSubscribedToHumidity = ref(false)
 const isSubscribedToPressure = ref(false)
+const imageDialogVisible = ref(false)
+const imageSrc = ref('')
+const activeName = ref('temperature')
+const temperatureImageSrc = ref('')
+const humidityImageSrc = ref('')
+const pressureImageSrc = ref('')
 
 const connectToMQTT = () => {
   client.value = mqtt.connect('ws://118.89.72.217:8083', {
@@ -60,12 +93,28 @@ const connectToMQTT = () => {
   // noinspection TypeScriptUnresolvedReference
   client.value.on('message', (topic, message) => {
     const messageStr = message.toString()
+    const data = JSON.parse(messageStr)
     if (topic === 'temperature/data') {
-      temperatureData.value.push(messageStr)
+      temperatureData.value.push({
+        date: data.date,
+        average: data.average,
+        graph: data.graph
+      })
+      temperatureImageSrc.value = data.prediction
     } else if (topic === 'humidity/data') {
-      humidityData.value.push(messageStr)
+      humidityData.value.push({
+        date: data.date,
+        average: data.average,
+        graph: data.graph
+      })
+      humidityImageSrc.value = data.prediction
     } else if (topic === 'pressure/data') {
-      pressureData.value.push(messageStr)
+      pressureData.value.push({
+        date: data.date,
+        average: data.average,
+        graph: data.graph
+      })
+      pressureImageSrc.value = data.prediction
     }
   })
   // noinspection TypeScriptUnresolvedReference
@@ -162,6 +211,11 @@ onBeforeUnmount(() => {
     client.value.end()
   }
 })
+
+const showImage = (base64Image: string) => {
+  imageSrc.value = `data:image/png;base64,${base64Image}`
+  imageDialogVisible.value = true
+}
 </script>
 
 <style scoped lang='css'>

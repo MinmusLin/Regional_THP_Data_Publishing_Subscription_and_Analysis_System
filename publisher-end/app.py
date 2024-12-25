@@ -3,7 +3,6 @@ import json
 import threading
 from flask import Flask, jsonify, request
 from flask_cors import CORS
-import requests
 from datetime import datetime
 import paho.mqtt.client as mqtt
 import matplotlib.pyplot as plt
@@ -56,11 +55,8 @@ def format_data(raw_data):
 def generate_graph(detail_sorted):
     times = [item['time'] for item in detail_sorted]
     values = [float(item['value']) for item in detail_sorted]
-    plt.figure(figsize=(10, 5))
+    plt.figure(figsize=(15, 5))
     plt.plot(times, values, marker='o', linestyle='-', color='b')
-    plt.xlabel('Time')
-    plt.ylabel('Value')
-    plt.title('Time vs Value')
     plt.grid(True)
     plt.xticks(rotation=45)
     buffer = io.BytesIO()
