@@ -219,6 +219,3 @@ const showImage = (base64Image: string) => {
   imageDialogVisible.value = true
 }
 </script>
-
-<style scoped lang='css'>
-</style>
