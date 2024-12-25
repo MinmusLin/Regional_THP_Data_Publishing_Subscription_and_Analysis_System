@@ -1,19 +1,19 @@
 <template>
   <h1>订阅端</h1>
-  <el-button @click="router.push('/home')">主页</el-button>
-  <el-button @click="router.push('/pub')">发布端</el-button>
-  <el-button @click="toggleSubscription('temperature')">
+  <el-button size='large' @click="router.push('/home')">主页</el-button>
+  <el-button size='large' @click="router.push('/pub')">发布端</el-button>
+  <el-button size='large' @click="toggleSubscription('temperature')">
     {{ isSubscribedToTemperature ? '取消订阅温度数据' : '订阅温度数据' }}
   </el-button>
-  <el-button @click="toggleSubscription('humidity')">
+  <el-button size='large' @click="toggleSubscription('humidity')">
     {{ isSubscribedToHumidity ? '取消订阅湿度数据' : '订阅湿度数据' }}
   </el-button>
-  <el-button @click="toggleSubscription('pressure')">
+  <el-button size='large' @click="toggleSubscription('pressure')">
     {{ isSubscribedToPressure ? '取消订阅气压数据' : '订阅气压数据' }}
   </el-button>
   <el-tabs v-model='activeName'>
     <el-tab-pane label='温度数据' name='temperature'>
-      <img :src='`data:image/png;base64,${temperatureImageSrc}`' alt='temperatureImage'>
+      <img v-if='temperatureImageSrc' :src='`data:image/png;base64,${temperatureImageSrc}`' alt='temperatureImage'>
       <el-table :data='temperatureData' style='width: 100%'>
         <el-table-column prop='date' label='日期' width='180'/>
         <el-table-column prop='average' label='平均温度' width='180'/>
@@ -27,7 +27,7 @@
       </el-table>
     </el-tab-pane>
     <el-tab-pane label='湿度数据' name='humidity'>
-      <img :src='`data:image/png;base64,${humidityImageSrc}`' alt='humidityImage'>
+      <img v-if='humidityImageSrc' :src='`data:image/png;base64,${humidityImageSrc}`' alt='humidityImage'>
       <el-table :data='humidityData' style='width: 100%'>
         <el-table-column prop='date' label='日期' width='180'/>
         <el-table-column prop='average' label='平均湿度' width='180'/>
@@ -41,7 +41,7 @@
       </el-table>
     </el-tab-pane>
     <el-tab-pane label='气压数据' name='pressure'>
-      <img :src='`data:image/png;base64,${pressureImageSrc}`' alt='pressureImage'>
+      <img v-if='pressureImageSrc' :src='`data:image/png;base64,${pressureImageSrc}`' alt='pressureImage'>
       <el-table :data='pressureData' style='width: 100%'>
         <el-table-column prop='date' label='日期' width='180'/>
         <el-table-column prop='average' label='平均气压' width='180'/>

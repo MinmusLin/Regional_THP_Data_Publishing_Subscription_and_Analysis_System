@@ -1,10 +1,10 @@
 <template>
   <h1>发布端</h1>
-  <el-button @click="router.push('/home')">主页</el-button>
-  <el-button @click="router.push('/sub')">订阅端</el-button>
-  <el-button @click="fetchDataByTopic('temperature')">发布温度数据</el-button>
-  <el-button @click="fetchDataByTopic('humidity')">发布湿度数据</el-button>
-  <el-button @click="fetchDataByTopic('pressure')">发布气压数据</el-button>
+  <el-button size='large' @click="router.push('/home')">主页</el-button>
+  <el-button size='large' @click="router.push('/sub')">订阅端</el-button>
+  <el-button size='large' @click="fetchDataByTopic('temperature')">发布温度数据</el-button>
+  <el-button size='large' @click="fetchDataByTopic('humidity')">发布湿度数据</el-button>
+  <el-button size='large' @click="fetchDataByTopic('pressure')">发布气压数据</el-button>
   <p>{{ responseData }}</p>
 </template>
 
