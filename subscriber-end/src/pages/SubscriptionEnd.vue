@@ -12,8 +12,8 @@
     {{ isSubscribedToPressure ? '取消订阅气压数据' : '订阅气压数据' }}
   </el-button>
   <el-tabs v-model='activeName'>
-    <img :src='`data:image/png;base64,${temperatureImageSrc}`'>
     <el-tab-pane label='温度数据' name='temperature'>
+      <img :src='`data:image/png;base64,${temperatureImageSrc}`' alt='temperatureImage'>
       <el-table :data='temperatureData' style='width: 100%'>
         <el-table-column prop='date' label='日期' width='180'/>
         <el-table-column prop='average' label='平均温度' width='180'/>
@@ -27,6 +27,7 @@
       </el-table>
     </el-tab-pane>
     <el-tab-pane label='湿度数据' name='humidity'>
+      <img :src='`data:image/png;base64,${humidityImageSrc}`' alt='humidityImage'>
       <el-table :data='humidityData' style='width: 100%'>
         <el-table-column prop='date' label='日期' width='180'/>
         <el-table-column prop='average' label='平均湿度' width='180'/>
@@ -40,6 +41,7 @@
       </el-table>
     </el-tab-pane>
     <el-tab-pane label='气压数据' name='pressure'>
+      <img :src='`data:image/png;base64,${pressureImageSrc}`' alt='pressureImage'>
       <el-table :data='pressureData' style='width: 100%'>
         <el-table-column prop='date' label='日期' width='180'/>
         <el-table-column prop='average' label='平均气压' width='180'/>

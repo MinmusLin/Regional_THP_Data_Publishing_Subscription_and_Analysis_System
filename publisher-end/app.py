@@ -8,6 +8,7 @@ import paho.mqtt.client as mqtt
 import matplotlib.pyplot as plt
 import io
 import base64
+import os
 
 app = Flask(__name__)
 
@@ -33,7 +34,7 @@ def load_data(topic):
     with open(data_file, 'r') as f:
         data[topic] = json.load(f)
 
-def format_data(raw_data):
+def format_data(raw_data, topic):
     date_str = list(raw_data.keys())[0][5:10]
     values = [float(value) for value in raw_data.values()]
     average = round(sum(values) / len(values), 2)
@@ -45,11 +46,18 @@ def format_data(raw_data):
         detail.append({'time': time_str, 'value': value_str})
     detail_sorted = sorted(detail, key=lambda x: datetime.strptime(x['time'], '%H:%M'))
     graph = generate_graph(detail_sorted)
+    prediction_image_path = f'plots/{topic}_plots/{topic}_plot_{current_index.get(topic, 0) + 1}.png'
+    if os.path.exists(prediction_image_path):
+        with open(prediction_image_path, 'rb') as img_file:
+            prediction_base64 = base64.b64encode(img_file.read()).decode('utf-8')
+    else:
+        prediction_base64 = None
     return {
         'date': date_str,
         'average': average_str,
         'detail': detail_sorted,
-        'graph': graph
+        'graph': graph,
+        'prediction': prediction_base64
     }
 
 def generate_graph(detail_sorted):
@@ -72,7 +80,7 @@ def publish_data(topic):
         if is_publishing.get(topic, False) and data.get(topic):
             if current_index.get(topic, 0) < len(data[topic]):
                 raw_data = data[topic][current_index.get(topic, 0)]
-                formatted_data = format_data(raw_data)
+                formatted_data = format_data(raw_data, topic)
                 try:
                     mqtt_client.publish(f'{topic}/data', json.dumps(formatted_data))
                     print(f'Data {current_index.get(topic, 0)} sent successfully for topic {topic}')
