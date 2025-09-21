@@ -12,7 +12,7 @@ Regional temperature / humidity / pressure data publishing, subscription, and an
 某区域温度 / 湿度 / 气压数据发布订阅及分析处理系统。
 
 > ***Relevant course***
-> * Fundamentals of IoT Applications 2024 (2024年同济大学物联网应用基础)
+> * Fundamentals of IoT Applications 2024 (2024 年同济大学物联网应用基础)
 
 ## 项目组成
 
