@@ -14,7 +14,7 @@ Regional temperature / humidity / pressure data publishing, subscription, and an
 > ***Relevant course***
 > * Fundamentals of IoT Applications 2024 (2024 年同济大学物联网应用基础)
 
-## 项目组成
+## 仓库组成
 
 * [MQTT Server](mqtt-server)
 MQTT 服务端
