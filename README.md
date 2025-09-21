@@ -16,14 +16,14 @@ Regional temperature / humidity / pressure data publishing, subscription, and an
 
 ## 项目组成
 
-* [mqtt-server](MQTT Server)
+* [MQTT Server](mqtt-server)
 MQTT 服务端
 
-* [publisher-end](Publisher End)
+* [Publisher End](publisher-end)
 发布端
 
-* [subscriber-end](Subscriber End)
+* [Subscriber End](subscriber-end)
 订阅端
 
-* [Presentation.pptx](Presentation.pptx)
+* [Presentation](Presentation.pptx)
 汇报 PPT
